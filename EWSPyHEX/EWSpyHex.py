@@ -154,12 +154,12 @@ class EWS:
             captured = Fill_in.capture(self.game,node.ptm)
             mustplay = nb.mustplay_zone(self.game.brd,Ovcs,Osvcs,Hex.oppCH(node.ptm))
             moves = []
-            node.pvcs = pvcs
+            '''node.pvcs = pvcs
             node.psvcs = psvcs
             node.Ovcs = Ovcs
             node.Osvcs = Osvcs
             node.Ohash = Ohash
-            node.Phash = phash
+            node.Phash = phash'''
             if mustplay == "nowin":
                 tt.store(self.game.brd, Hex.oppCH(node.ptm))
                 return True, False, 0, 1, None
@@ -228,7 +228,12 @@ class EWS:
         if child.expanded:
             isSolved, isWinning, wins, visits,wm = self.SelectBackpropagate(child,tt,th)
         else:
-            isSolved, isWinning, wins, visits,wm = self.Expand(child,tt,th,string,node.Ovcs,node.Osvcs,node.pvcs,node.psvcs,node.Ohash,node.Phash)
+            reslt = th.lookup(string)
+            if reslt != None:
+                pvcs,psvcs,Phash,Ovcs,Osvcs,Ohash,mustplay,scores = reslt[0],reslt[1],reslt[2],reslt[3],reslt[4],reslt[5],reslt[6],reslt[7]
+            else:
+                pvcs,psvcs,Phash,Ovcs,Osvcs,Ohash = None,None,None,None,None,None
+            isSolved, isWinning, wins, visits,wm = self.Expand(child,tt,th,string,Ovcs,Osvcs,pvcs,psvcs,Ohash,Phash)
         self.game.undo()
         '''if VERBOSE:
             print("UNDO")
